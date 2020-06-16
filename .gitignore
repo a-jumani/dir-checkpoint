@@ -1,0 +1,8 @@
+# omit specific file types
+*.DS_Store
+*.coverage
+
+# omit folders
+__pycache__
+test-dirs
+test-cp
