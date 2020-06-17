@@ -10,4 +10,4 @@ Check `checkpoint.py` for documentation.
 Using `pip install -r requirements.txt` to install required libraries / modules. Run tests from `dir-checkpoint/` using:
 - (no coverage, no fault tolerance): `PYTHONPATH=. pytest tests-no-failure/`
 - (coverage, no fault tolerance): `PYTHONPATH=. pytest --cov=checkpoint tests-no-failure/` 
-- (no coverage, fault tolerance): `./tests-failure/tests.sh` (incomplete).
+- (no coverage, fault tolerance): `./tests-failure/tests.sh || set -m`.
