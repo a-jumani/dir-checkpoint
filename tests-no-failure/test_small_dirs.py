@@ -3,6 +3,16 @@ import filecmp
 import os
 import shutil
 
+""" Testing strategy
+
+Partition checkpoint manipulation as follows:
+- creation      first, multiple
+- restore       empty dir, non-empty dir
+- clear         once, multiple
+
+Exhausitve Cartesian coverage of partitions with restore.
+"""
+
 
 class TestMetadata:
     # constant directory
@@ -81,17 +91,25 @@ class TestCheckpointCreation:
 
             TestHelpers.match_dir_contents(i)
 
+    # covers creation first
+    #        restore  non-empty dir
     def test_create_restore(self):
         self.create_restore()
 
+    # covers creation multiple
+    #        restore  non-empty dir
     def test_create_restore_multiple(self):
         self.create_restore(2)
         self.create_restore(4)
         self.create_restore(5)
 
+    # covers creation first
+    #        restore  empty dir
     def test_create_empty_restore(self):
         self.create_restore(empty=True)
 
+    # covers creation multiple
+    #        restore  empty dir
     def test_create_empty_restore_multiple(self):
         self.create_restore(2, True)
         self.create_restore(3, True)
@@ -122,17 +140,25 @@ class TestCheckpointClearance:
             # check dir is empty
             TestHelpers.is_dir_empty(i)
 
+    # covers clear    once
+    #        restore  non-empty dir
     def test_create_clear_restore(self):
         self.clear_restore()
 
+    # covers clear    multiple
+    #        restore  non-empty dir
     def test_create_clear_restore_multiple(self):
         self.clear_restore(2)
         self.clear_restore(4)
         self.clear_restore(5)
 
+    # covers clear    one
+    #        restore  empty dir
     def test_create_clear_empty_restore(self):
         self.clear_restore(empty=True)
 
+    # covers clear    multiple
+    #        restore  empty dir
     def test_create_clear_empty_restore_multiple(self):
         self.clear_restore(2, True)
         self.clear_restore(3, True)
