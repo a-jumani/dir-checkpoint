@@ -29,6 +29,11 @@ class TestHelpers:
 
             # match all files
             for f in files:
+
+                # ignore hidden files - to ignore files like .DS_Store
+                if f.startswith('.'):
+                    continue
+
                 path_match = os.path.join(subdir, f)
                 path_test = path_match.replace(match_dir, test_dir)
 
