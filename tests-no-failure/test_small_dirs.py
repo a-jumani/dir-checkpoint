@@ -1,5 +1,5 @@
+from tests_helpers.helpers import TestHelpers
 import checkpoint
-import filecmp
 import os
 import shutil
 
@@ -10,7 +10,7 @@ Partition checkpoint manipulation as follows:
 - restore       empty dir, non-empty dir
 - clear         once, multiple
 
-Exhausitve Cartesian coverage of partitions with restore.
+Exhaustive Cartesian coverage of partitions with restore.
 """
 
 
@@ -31,48 +31,11 @@ class TestMetadata:
     }
 
 
-class TestHelpers:
-    @staticmethod
-    def reset_test_dir():
-        shutil.rmtree(TestMetadata.TEST_DIR)
-        shutil.copytree(TestMetadata.MATCH_DIR, TestMetadata.TEST_DIR)
-
-    @staticmethod
-    def match_dir_contents(n):
-        """ Ensure all directories and all files in MATCH_DIR are in TEST_DIR.
-        """
-        for subdir, dirs, files in os.walk(
-                os.path.join(TestMetadata.MATCH_DIR, TestMetadata.TESTS[n])):
-
-            # match all directories in this subdirectory
-            for d in dirs:
-                assert os.path.isdir(os.path.join(subdir, d)
-                                     .replace(TestMetadata.MATCH_DIR,
-                                              TestMetadata.TEST_DIR))
-
-            # match all files
-            for f in files:
-                path_match = os.path.join(subdir, f)
-                path_test = path_match.replace(TestMetadata.MATCH_DIR,
-                                               TestMetadata.TEST_DIR)
-
-                # check file exists
-                assert os.path.isfile(path_test)
-
-                # check contents are same
-                assert filecmp.cmp(
-                    path_test, path_match, shallow=False)
-
-    @staticmethod
-    def is_dir_empty(n):
-        return [] == os.listdir(os.path.join(TestMetadata.MATCH_DIR,
-                                             TestMetadata.TESTS[n]))
-
-
 class TestCheckpointCreation:
     def create_restore(self, reps=1, empty=False):
         """ Create checkpoint and then restore from checkpoint. """
-        TestHelpers.reset_test_dir()
+        TestHelpers.reset_test_dir(TestMetadata.TEST_DIR,
+                                   TestMetadata.MATCH_DIR)
         for i in TestMetadata.TESTS:
             dir_path = os.path.join(TestMetadata.TEST_DIR,
                                     TestMetadata.TESTS[i])
@@ -89,7 +52,9 @@ class TestCheckpointCreation:
             # restore from checkpoint
             checkpoint.restore_checkpoint(dir_path)
 
-            TestHelpers.match_dir_contents(i)
+            assert TestHelpers.match_dir_contents(TestMetadata.MATCH_DIR,
+                                                  TestMetadata.TEST_DIR,
+                                                  TestMetadata.TESTS[i])
 
     # covers creation first
     #        restore  non-empty dir
@@ -117,7 +82,8 @@ class TestCheckpointCreation:
 
 class TestCheckpointClearance:
     def clear_restore(self, reps=1, empty=False):
-        TestHelpers.reset_test_dir()
+        TestHelpers.reset_test_dir(TestMetadata.TEST_DIR,
+                                   TestMetadata.MATCH_DIR)
         for i in TestMetadata.TESTS:
             dir_path = os.path.join(TestMetadata.TEST_DIR,
                                     TestMetadata.TESTS[i])
@@ -138,7 +104,8 @@ class TestCheckpointClearance:
             checkpoint.restore_checkpoint(dir_path)
 
             # check dir is empty
-            TestHelpers.is_dir_empty(i)
+            TestHelpers.is_dir_empty(TestMetadata.MATCH_DIR,
+                                     TestMetadata.TESTS[i])
 
     # covers clear    once
     #        restore  non-empty dir
