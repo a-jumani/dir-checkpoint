@@ -52,9 +52,13 @@ class TestCheckpointCreation:
             # restore from checkpoint
             checkpoint.restore_checkpoint(dir_path)
 
-            assert TestHelpers.match_dir_contents(TestMetadata.MATCH_DIR,
-                                                  TestMetadata.TEST_DIR,
-                                                  TestMetadata.TESTS[i])
+            # test contents
+            content_match, match_error = TestHelpers.is_dir_contents_same(
+                TestMetadata.MATCH_DIR,
+                TestMetadata.TEST_DIR,
+                TestMetadata.TESTS[i]
+            )
+            assert content_match, match_error
 
     # covers creation first
     #        restore  non-empty dir
@@ -104,8 +108,11 @@ class TestCheckpointClearance:
             checkpoint.restore_checkpoint(dir_path)
 
             # check dir is empty
-            TestHelpers.is_dir_empty(TestMetadata.MATCH_DIR,
-                                     TestMetadata.TESTS[i])
+            content_match, match_error = TestHelpers.is_dir_empty(
+                TestMetadata.TEST_DIR,
+                TestMetadata.TESTS[i]
+            )
+            assert content_match, match_error
 
     # covers clear    once
     #        restore  non-empty dir
