@@ -1,6 +1,6 @@
 # omit specific file types
 *.DS_Store
-*.coverage
+*.coverage*
 
 # omit folders
 __pycache__
