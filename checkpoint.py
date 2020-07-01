@@ -58,10 +58,10 @@ def restore_checkpoint(path: str):
         path            path to a directory
     """
     logger.info('Restoring checkpoint of {}'.format(path))
+    _remove_directory(path)
 
     # current checkpoint exists
     if os.path.isdir(path + CHECKPOINT_STATE.CURRENT):
-        shutil.rmtree(path)
         shutil.copytree(path + CHECKPOINT_STATE.CURRENT, path)
         logger.debug('Checkpoint for {} restored from current'.format(path))
 
@@ -70,14 +70,12 @@ def restore_checkpoint(path: str):
     elif os.path.isdir(path + CHECKPOINT_STATE.OLD):
         os.rename(path + CHECKPOINT_STATE.IN_PROG,
                   path + CHECKPOINT_STATE.CURRENT)
-        shutil.rmtree(path)
         shutil.copytree(path + CHECKPOINT_STATE.CURRENT, path)
         logger.debug('Checkpoint for {} restored from in progress one'
                      .format(path))
 
     # no checkpoints
     else:
-        _remove_directory(path)
         os.mkdir(path)
         logger.debug('No checkpoint found for {}'.format(path))
 
@@ -102,4 +100,3 @@ def clear_checkpoint(path: str):
 def _remove_directory(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
-        logging.debug('Deleted dir {}'.format(path))
