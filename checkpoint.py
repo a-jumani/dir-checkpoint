@@ -31,7 +31,7 @@ def create_checkpoint(path: str, empty: bool = False):
         os.mkdir(path + CHECKPOINT_STATE.IN_PROG)
     else:
         # copy contents
-        shutil.copytree(path, path + CHECKPOINT_STATE.IN_PROG)
+        _copy_dir_contents(path, path + CHECKPOINT_STATE.IN_PROG)
     logger.debug('Completed copying of contents at {}'.format(path))
 
     # rename current checkpoint to old checkpoint
@@ -62,7 +62,7 @@ def restore_checkpoint(path: str):
 
     # current checkpoint exists
     if os.path.isdir(path + CHECKPOINT_STATE.CURRENT):
-        shutil.copytree(path + CHECKPOINT_STATE.CURRENT, path)
+        _copy_dir_contents(path + CHECKPOINT_STATE.CURRENT, path)
         logger.debug('Checkpoint for {} restored from current'.format(path))
 
     # old checkpoint exists - checkpoint creation failed after copying
@@ -70,7 +70,7 @@ def restore_checkpoint(path: str):
     elif os.path.isdir(path + CHECKPOINT_STATE.OLD):
         os.rename(path + CHECKPOINT_STATE.IN_PROG,
                   path + CHECKPOINT_STATE.CURRENT)
-        shutil.copytree(path + CHECKPOINT_STATE.CURRENT, path)
+        _copy_dir_contents(path + CHECKPOINT_STATE.CURRENT, path)
         logger.debug('Checkpoint for {} restored from in progress one'
                      .format(path))
 
@@ -98,5 +98,14 @@ def clear_checkpoint(path: str):
 
 # helper functions
 def _remove_directory(path):
+    """ Remove a directory if it exists.
+    """
     if os.path.isdir(path):
         shutil.rmtree(path)
+
+
+def _copy_dir_contents(path, new_path):
+    """ Copy contents of a directory from path to new_path and fsync it.
+    """
+    shutil.copytree(path, new_path)
+    os.sync()

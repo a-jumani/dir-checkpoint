@@ -26,9 +26,9 @@ class TestMetadata:
     CP_OLD = os.path.join(FOLDER, "match-old-cp")
     CP_NEW = os.path.join(FOLDER, "match-new-cp")
     TEST_DIR = os.path.join(FOLDER, "test-cp")
-    SLEEP_INCREMENT = 0.0002
+    SLEEP_INCREMENT = 0.001
     SUCCESS_COUNT_NEEDED = 5
-    REP_LIMITS = 500
+    REP_LIMITS = 200
 
 
 class ExecAndKill(object):

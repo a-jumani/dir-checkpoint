@@ -1,9 +1,11 @@
 # dir-checkpoint
-Create and manage fault-tolerant checkpointing for a directory.
+Create and manage fault-tolerant checkpointing for a directory on Linux.
+
+__Use Case:__ checkpoint a computation to allow saving of progress in the event of a crash. Correctness and safety are the primary goals behind this work as opposed to performance. Checkpoints are assumed to be created on longer time scales, e.g. after every 30 minutes or so.
 
 __Guarantee:__ a successful call to `restore_checkpoint(path)` restores `path` to the latest checkpointed state (i.e. most recent _successful_ call to `create_checkpoint` or `clear_checkpoint`). The implementation depends on the following assumptions:
 - `os.rename` is atomic, and
-- if `os.rename` on a directory is successful, directory data is successfully persisted.
+- `os.sync` works as expected.
 
 __Test Status (1 Jul 2020):__ fault tolerance tests passed with 100% coverage.
 
